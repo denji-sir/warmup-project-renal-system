@@ -1,0 +1,66 @@
+# IDE and OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment and config
+.env
+.env.local
+.env.production
+
+# Dependencies
+/vendor/
+node_modules/
+
+# Build artifacts
+/public/assets/css/*.min.css
+/public/assets/js/*.min.js
+/public/uploads
+coverage/
+
+# Storage directories
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/exports/*
+!/storage/exports/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# Cache
+*.cache
+.phpunit.cache/
+
+# Backups
+/backups/*.sql
+
+# Composer
+composer.phar
+composer.lock
+
+# Testing
+/tests/coverage/
+phpunit.xml
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# User uploads (keep structure but not files)
+/public/uploads/avatars/*
+!/public/uploads/avatars/.gitkeep
+/public/uploads/properties/*
+!/public/uploads/properties/.gitkeep
+/public/uploads/posts/*
+!/public/uploads/posts/.gitkeep
+
+# Generated exports
+/storage/exports/properties/*
+/storage/exports/users/*
+/storage/exports/posts/*
+
+# Docker
+docker-compose.override.yml

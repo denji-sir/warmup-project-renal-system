@@ -1,0 +1,101 @@
+{
+    "name": "denji-sir/warmup-project-renal-system",
+    "description": "Real Estate System - Property sales and rental platform built with pure PHP and Light MVC architecture",
+    "type": "project",
+    "keywords": [
+        "php",
+        "mvc",
+        "real-estate",
+        "property-management",
+        "rental",
+        "sales"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "denji-sir",
+            "email": "developer@example.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-gd": "*",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "phpmailer/phpmailer": "^6.9",
+        "phpoffice/phpspreadsheet": "^1.29"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "filp/whoops": "^2.15"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "App\\Controllers\\": "app/Controllers/",
+            "App\\Models\\": "app/Models/",
+            "App\\Middleware\\": "app/Middleware/"
+        },
+        "files": [
+            "core/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@setup-env",
+            "@setup-directories",
+            "@setup-permissions"
+        ],
+        "post-update-cmd": [
+            "@setup-directories",
+            "@setup-permissions"
+        ],
+        "setup-env": [
+            "php -r \"if (!file_exists('.env')) { copy('.env.example', '.env'); echo 'Environment file created from template\\n'; }\""
+        ],
+        "setup-directories": [
+            "php -r \"if (!is_dir('storage/uploads')) { mkdir('storage/uploads', 0755, true); echo 'Created storage/uploads directory\\n'; }\"",
+            "php -r \"if (!is_dir('storage/exports')) { mkdir('storage/exports', 0755, true); echo 'Created storage/exports directory\\n'; }\"",
+            "php -r \"if (!is_dir('storage/logs')) { mkdir('storage/logs', 0755, true); echo 'Created storage/logs directory\\n'; }\"",
+            "php -r \"if (!is_dir('public/uploads')) { if (is_dir('storage/uploads')) { symlink('../storage/uploads', 'public/uploads'); echo 'Created uploads symlink\\n'; } }\""
+        ],
+        "setup-permissions": [
+            "php -r \"if (is_dir('storage')) { chmod('storage', 0755); echo 'Set storage permissions\\n'; }\"",
+            "php -r \"if (is_dir('storage/uploads')) { chmod('storage/uploads', 0755); echo 'Set uploads permissions\\n'; }\"",
+            "php -r \"if (is_dir('storage/logs')) { chmod('storage/logs', 0755); echo 'Set logs permissions\\n'; }\""
+        ],
+        "migrate": [
+            "php migrations/migrate.php"
+        ],
+        "seed": [
+            "php seeds/run_seeds.php"
+        ],
+        "test": [
+            "phpunit"
+        ],
+        "test-coverage": [
+            "phpunit --coverage-html coverage"
+        ],
+        "serve": [
+            "php -S localhost:8000 -t public"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}
