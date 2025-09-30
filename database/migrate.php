@@ -185,10 +185,7 @@ class DatabaseMigrator
                 return;
             }
 
-            // Начинаем транзакцию
-            $this->connection->beginTransaction();
-
-            // Выполняем SQL
+            // Выполняем SQL без транзакции для DDL операций
             $this->connection->exec($sql);
 
             // Записываем выполненную миграцию
@@ -197,14 +194,9 @@ class DatabaseMigrator
             );
             $stmt->execute([$migration, $batch]);
 
-            // Подтверждаем транзакцию
-            $this->connection->commit();
-
             echo "✓ ВЫПОЛНЕНА\n";
 
         } catch (Exception $e) {
-            // Откатываем транзакцию в случае ошибки
-            $this->connection->rollBack();
             echo "✗ ОШИБКА\n";
             echo "   Сообщение: " . $e->getMessage() . "\n";
             echo "   Миграция остановлена\n";
