@@ -14,7 +14,7 @@ class View
     
     public function __construct()
     {
-        $this->viewPath = __DIR__ . '/../app/Views';
+        $this->viewPath = __DIR__ . '/../resources/views';
     }
     
     /**

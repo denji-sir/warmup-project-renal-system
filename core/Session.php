@@ -16,28 +16,31 @@ class Session
     }
     
     /**
-     * Configure session security settings
+     * Configure session settings
      */
     private function configureSession(): void
     {
-        // Session configuration
-        ini_set('session.cookie_httponly', '1');
-        ini_set('session.cookie_samesite', env('SESSION_SAMESITE', 'Lax'));
-        ini_set('session.use_strict_mode', '1');
-        ini_set('session.use_only_cookies', '1');
-        
-        // Set secure flag for HTTPS
-        if (env('APP_ENV') === 'production') {
-            ini_set('session.cookie_secure', '1');
+        // Only configure if session is not active
+        if (session_status() === PHP_SESSION_NONE) {
+            // Session configuration
+            ini_set('session.cookie_httponly', '1');
+            ini_set('session.cookie_samesite', env('SESSION_SAMESITE', 'Lax'));
+            ini_set('session.use_strict_mode', '1');
+            ini_set('session.use_only_cookies', '1');
+            
+            // Set secure flag for HTTPS
+            if (env('APP_ENV') === 'production') {
+                ini_set('session.cookie_secure', '1');
+            }
+            
+            // Session name
+            session_name(env('SESSION_NAME', 'RESESSID'));
+            
+            // Session lifetime
+            $lifetime = (int) env('SESSION_LIFETIME', 3600);
+            ini_set('session.gc_maxlifetime', (string) $lifetime);
+            session_set_cookie_params($lifetime);
         }
-        
-        // Session name
-        session_name(env('SESSION_NAME', 'RESESSID'));
-        
-        // Session lifetime
-        $lifetime = (int) env('SESSION_LIFETIME', 3600);
-        ini_set('session.gc_maxlifetime', (string) $lifetime);
-        session_set_cookie_params($lifetime);
     }
     
     /**
@@ -155,7 +158,7 @@ class Session
     /**
      * Get flash messages
      */
-    public function getFlash(string $type = null): array
+    public function getFlash(?string $type = null): array
     {
         if ($type) {
             return $_SESSION['_flash'][$type] ?? [];
@@ -167,7 +170,7 @@ class Session
     /**
      * Check if has flash messages
      */
-    public function hasFlash(string $type = null): bool
+    public function hasFlash(?string $type = null): bool
     {
         if ($type) {
             return !empty($_SESSION['_flash'][$type]);

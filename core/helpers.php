@@ -88,7 +88,7 @@ if (!function_exists('back')) {
     /**
      * Redirect back with fallback
      */
-    function back(string $fallback = '/'): never
+    function back(string $fallback = '/'): void
     {
         $referer = $_SERVER['HTTP_REFERER'] ?? null;
         $url = $referer && parse_url($referer, PHP_URL_HOST) === $_SERVER['HTTP_HOST'] 
@@ -169,7 +169,19 @@ if (!function_exists('user')) {
      */
     function user(): ?\App\Models\User
     {
-        return auth()->user();
+        $userData = auth()->user();
+        
+        if (!$userData) {
+            return null;
+        }
+        
+        // Создаем объект User из массива данных
+        $user = new \App\Models\User();
+        foreach ($userData as $key => $value) {
+            $user->$key = $value;
+        }
+        
+        return $user;
     }
 }
 
