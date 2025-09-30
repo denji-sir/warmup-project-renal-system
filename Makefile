@@ -41,16 +41,16 @@ permissions: ## Set up directories and permissions
 
 migrate: ## Run database migrations
 	@echo "${YELLOW}Running database migrations...${NC}"
-	@if [ -f migrations/migrate.php ]; then \
-		php migrations/migrate.php; \
+	@if [ -f database/migrate.php ]; then \
+		php database/migrate.php; \
 	else \
 		echo "${RED}Migration script not found${NC}"; \
 	fi
 
 seed: ## Seed database with sample data
 	@echo "${YELLOW}Seeding database with sample data...${NC}"
-	@if [ -f seeds/run_seeds.php ]; then \
-		php seeds/run_seeds.php; \
+	@if [ -f database/seed.php ]; then \
+		php database/seed.php; \
 	else \
 		echo "${RED}Seeder script not found${NC}"; \
 	fi
