@@ -1,80 +1,61 @@
-<?php $title = 'О компании - ' . config('app.name'); ?>
+<?php $title = 'О компании — ' . config('app.name'); ?>
 
 <?php ob_start(); ?>
 
-<!-- Hero Section -->
-<section class="hero bg-primary text-inverse py-2xl">
-    <div class="container text-center">
-        <h1 class="display-4 mb-md">О нашей компании</h1>
-        <p class="lead">
-            Более 15 лет на рынке недвижимости. Профессиональный подход к каждому клиенту.
-        </p>
-    </div>
-</section>
-
-<!-- Main Content -->
-<section class="py-2xl">
+<section class="section section--muted">
     <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <h2>Наша история</h2>
-                <p class="lead">
-                    Компания «<?= config('app.name') ?>» была основана в 2008 году с целью предоставления 
-                    качественных услуг в сфере недвижимости.
-                </p>
-                
-                <p>
-                    За годы работы мы помогли тысячам семей найти идеальное жильё и совершить 
-                    успешные сделки с недвижимостью. Наша команда состоит из опытных риелторов, 
-                    юристов и оценщиков, которые обеспечивают профессиональное сопровождение 
-                    на всех этапах сделки.
-                </p>
-
-                <h3>Наши принципы</h3>
-                <ul>
-                    <li><strong>Профессионализм</strong> — высокий уровень экспертизы в области недвижимости</li>
-                    <li><strong>Прозрачность</strong> — честная работа без скрытых комиссий</li>
-                    <li><strong>Индивидуальный подход</strong> — учитываем потребности каждого клиента</li>
-                    <li><strong>Результат</strong> — гарантируем достижение поставленных целей</li>
-                </ul>
-
-                <h3>Лицензии и сертификаты</h3>
-                <p>
-                    Компания имеет все необходимые лицензии для осуществления деятельности в сфере 
-                    недвижимости. Наши специалисты регулярно повышают квалификацию и проходят 
-                    сертификацию в ведущих образовательных центрах.
-                </p>
+        <div class="section__header">
+            <span class="eyebrow">15 лет в недвижимости</span>
+            <h1 class="section__title">Мы создаём для клиентов новые сценарии жизни</h1>
+            <p class="section__subtitle section__subtitle--muted">
+                <?= config('app.name') ?> помогает людям и бизнесу находить пространства, которые вдохновляют и работают на их цели.
+            </p>
+        </div>
+        <div class="split-grid">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h3>История и ценности</h3>
+                    <p>
+                        Компания была основана в 2008 году командой брокеров, которые хотели сделать рынок недвижимости прозрачным и комфортным.
+                        Сегодня мы сопровождаем сделки любой сложности: от покупки квартиры в новостройке до продажи доходного бизнес-центра.
+                    </p>
+                    <p>
+                        В портфеле — более 10 000 объектов и 2 500 успешно закрытых сделок. Мы работаем на доверии, аналитике и долгосрочных отношениях.
+                    </p>
+                </div>
             </div>
-            
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Ключевые цифры</h5>
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-card__value">15+</div>
+                            <div class="stat-card__label">Лет на рынке</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__value">98%</div>
+                            <div class="stat-card__label">Клиентов рекомендуют нас</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__value">50+</div>
+                            <div class="stat-card__label">Экспертов в команде</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__value">24/7</div>
+                            <div class="stat-card__label">Поддержка клиентов</div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="stat-item mb-lg">
-                            <div class="stat-number text-primary">15+</div>
-                            <div class="stat-label">лет на рынке</div>
+                    <div class="timeline mt-lg">
+                        <div class="timeline__item">
+                            <strong>2008</strong>
+                            <p>Запустили первую консультационную службу по премиальной недвижимости.</p>
                         </div>
-                        
-                        <div class="stat-item mb-lg">
-                            <div class="stat-number text-primary">10 000+</div>
-                            <div class="stat-label">объектов недвижимости</div>
+                        <div class="timeline__item">
+                            <strong>2014</strong>
+                            <p>Открыли отдел инвестиций и запустили сервис аналитики доходности объектов.</p>
                         </div>
-                        
-                        <div class="stat-item mb-lg">
-                            <div class="stat-number text-primary">2 500+</div>
-                            <div class="stat-label">успешных сделок</div>
-                        </div>
-                        
-                        <div class="stat-item mb-lg">
-                            <div class="stat-number text-primary">50+</div>
-                            <div class="stat-label">опытных риелторов</div>
-                        </div>
-                        
-                        <div class="stat-item">
-                            <div class="stat-number text-primary">98%</div>
-                            <div class="stat-label">довольных клиентов</div>
+                        <div class="timeline__item">
+                            <strong>2021</strong>
+                            <p>Вышли на международный рынок и создали архитектурное бюро для клиентов.</p>
                         </div>
                     </div>
                 </div>
@@ -83,75 +64,74 @@
     </div>
 </section>
 
-<!-- Team Section -->
-<section class="bg-secondary py-2xl">
+<section class="section">
     <div class="container">
-        <div class="text-center mb-xl">
-            <h2>Наша команда</h2>
-            <p class="lead text-secondary">Профессионалы с многолетним опытом</p>
+        <div class="section__header">
+            <span class="eyebrow">Что нас отличает</span>
+            <h2 class="section__title">Стандарты работы команды</h2>
         </div>
-        
-        <div class="row">
-            <?php for ($i = 1; $i <= 4; $i++): ?>
-                <div class="col-md-3 col-sm-6 mb-lg text-center">
-                    <div class="team-member">
-                        <div class="team-avatar mb-md">
-                            <img src="https://ui-avatars.com/api/?name=Сотрудник+<?= $i ?>&background=6366f1&color=fff&size=150" 
-                                 alt="Сотрудник <?= $i ?>" 
-                                 class="rounded-circle" 
-                                 width="150" height="150">
-                        </div>
-                        <h5><?= ['Анна Петрова', 'Михаил Сидоров', 'Елена Козлова', 'Дмитрий Новиков'][$i-1] ?></h5>
-                        <p class="text-secondary"><?= ['Директор', 'Ведущий риелтор', 'Юрист', 'Оценщик'][$i-1] ?></p>
-                        <p class="text-sm">
-                            <?= ['Опыт работы более 15 лет', 'Специалист по премиум-недвижимости', 'Эксперт по сделкам', 'Сертифицированный оценщик'][$i-1] ?>
-                        </p>
+        <div class="feature-grid">
+            <?php
+            $values = [
+                ['title' => 'Прозрачность', 'text' => 'Каждый шаг сделки фиксирован, вся информация по объекту и рискам доступна клиенту.'],
+                ['title' => 'Индивидуальность', 'text' => 'Создаём решения под конкретный запрос: личное жильё, инвестиции, коммерция.'],
+                ['title' => 'Технологичность', 'text' => 'Используем аналитические отчёты, VR-показы и диджитал-досье на объекты.'],
+            ];
+            foreach ($values as $value): ?>
+                <article class="feature-card">
+                    <h3><?= e($value['title']) ?></h3>
+                    <p><?= e($value['text']) ?></p>
+                    <div class="pill-list">
+                        <span class="pill">Экспертиза</span>
+                        <span class="pill">Ответственность</span>
                     </div>
-                </div>
-            <?php endfor; ?>
+                </article>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
 
-<!-- Contact CTA -->
-<section class="py-xl">
-    <div class="container text-center">
-        <h2>Готовы начать сотрудничество?</h2>
-        <p class="lead mb-lg">Свяжитесь с нами для бесплатной консультации</p>
-        
-        <div class="d-flex justify-center gap-md">
-            <a href="/contact" class="btn btn-primary btn-lg">Связаться с нами</a>
-            <a href="/services" class="btn btn-outline btn-lg">Наши услуги</a>
+<section class="section section--muted">
+    <div class="container">
+        <div class="section__header">
+            <span class="eyebrow">Команда</span>
+            <h2 class="section__title">Люди, которые создают ваш результат</h2>
+        </div>
+        <div class="team-grid">
+            <?php
+            $team = [
+                ['name' => 'Анна Петрова', 'role' => 'Управляющий партнёр', 'bio' => '15 лет на рынке. Специализация — премиальные объекты в Москве и Санкт-Петербурге.', 'img' => 'https://ui-avatars.com/api/?name=AP&background=1f3c88&color=fff'],
+                ['name' => 'Михаил Сидоров', 'role' => 'Руководитель брокерского отдела', 'bio' => 'Знает каждую новостройку бизнес-класса. Эксперт по переговорам.', 'img' => 'https://ui-avatars.com/api/?name=MS&background=0ea5e9&color=fff'],
+                ['name' => 'Елена Козлова', 'role' => 'Главный юрист', 'bio' => '20+ лет в недвижимости. Гарантия чистоты сделки и безопасности инвестиций.', 'img' => 'https://ui-avatars.com/api/?name=EK&background=f97316&color=fff'],
+                ['name' => 'Дмитрий Новиков', 'role' => 'Head of Investments', 'bio' => 'Создаёт инвестиционные стратегии с доходностью до 18% годовых.', 'img' => 'https://ui-avatars.com/api/?name=DN&background=1f3c88&color=fff'],
+            ];
+            foreach ($team as $member): ?>
+                <article class="team-card">
+                    <img src="<?= $member['img'] ?>" alt="<?= e($member['name']) ?>">
+                    <h4><?= e($member['name']) ?></h4>
+                    <p class="team-card__role"><?= e($member['role']) ?></p>
+                    <p><?= e($member['bio']) ?></p>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<section class="section section--compact">
+    <div class="container">
+        <div class="cta-panel">
+            <div>
+                <h2 class="section__title text-inverse">Хотите обсудить проект?</h2>
+                <p class="section__subtitle">Назначим встречу в удобном формате, подготовим аналитику рынка и подборку объектов.</p>
+            </div>
+            <div class="cta-panel__actions">
+                <a href="/contact" class="btn btn-outline-light btn-lg">Связаться с нами</a>
+                <a href="/services" class="btn btn-primary btn-lg">Посмотреть услуги</a>
+            </div>
         </div>
     </div>
 </section>
 
 <?php $content = ob_get_clean(); ?>
-
-<!-- Custom styles -->
-<?php ob_start(); ?>
-.team-member {
-    transition: transform var(--transition-normal);
-}
-
-.team-member:hover {
-    transform: translateY(-5px);
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    display: block;
-}
-
-.stat-label {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-}
-<?php $customCss = ob_get_clean(); ?>
 
 <?php require __DIR__ . '/../layouts/main.php'; ?>

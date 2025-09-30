@@ -1,360 +1,220 @@
-<?php $title = 'Объекты недвижимости'; ?>
+<?php $title = 'Объекты недвижимости — ' . config('app.name'); ?>
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <!-- Фильтры -->
-        <div class="col-lg-3">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-filter"></i> Фильтры</h5>
-                </div>
-                <div class="card-body">
-                    <form method="GET" action="/properties">
-                        <!-- Поиск -->
-                        <div class="mb-3">
-                            <label class="form-label">Поиск</label>
-                            <input type="text" name="search" class="form-control" 
-                                   value="<?= htmlspecialchars($filters['search']) ?>" 
-                                   placeholder="Название, адрес...">
-                        </div>
+<?php ob_start(); ?>
 
-                        <!-- Тип недвижимости -->
-                        <div class="mb-3">
-                            <label class="form-label">Тип недвижимости</label>
-                            <select name="type" class="form-select">
-                                <option value="">Все типы</option>
-                                <?php foreach ($types as $key => $label): ?>
-                                    <option value="<?= $key ?>" <?= $filters['type'] === $key ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($label) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+<?php $totalCount = $pagination['total_count'] ?? count($properties); ?>
+<?php $currentUser = auth(); ?>
 
-                        <!-- Категория -->
-                        <div class="mb-3">
-                            <label class="form-label">Категория</label>
-                            <select name="category_id" class="form-select">
-                                <option value="">Все категории</option>
-                                <?php foreach ($categories as $category): ?>
-                                    <option value="<?= $category['id'] ?>" 
-                                            <?= (string)$filters['category_id'] === (string)$category['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($category['name']) ?>
-                                        (<?= $category['properties_count'] ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <!-- Город -->
-                        <div class="mb-3">
-                            <label class="form-label">Город</label>
-                            <select name="city" class="form-select">
-                                <option value="">Все города</option>
-                                <?php foreach ($cities as $cityName => $count): ?>
-                                    <option value="<?= htmlspecialchars($cityName) ?>" 
-                                            <?= $filters['city'] === $cityName ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($cityName) ?> (<?= $count ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <!-- Цена -->
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label">Цена от</label>
-                                <input type="number" name="min_price" class="form-control" 
-                                       value="<?= htmlspecialchars($filters['min_price']) ?>" 
-                                       placeholder="0">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">до</label>
-                                <input type="number" name="max_price" class="form-control" 
-                                       value="<?= htmlspecialchars($filters['max_price']) ?>" 
-                                       placeholder="∞">
-                            </div>
-                        </div>
-
-                        <!-- Количество комнат -->
-                        <div class="mb-3">
-                            <label class="form-label">Комнат</label>
-                            <select name="rooms" class="form-select">
-                                <option value="">Любое</option>
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <option value="<?= $i ?>" <?= (string)$filters['rooms'] === (string)$i ? 'selected' : '' ?>>
-                                        <?= $i ?><?= $i >= 5 ? '+' : '' ?>
-                                    </option>
-                                <?php endfor; ?>
-                            </select>
-                        </div>
-
-                        <!-- Статус (только для авторизованных) -->
-                        <?php if (isLoggedIn()): ?>
-                        <div class="mb-3">
-                            <label class="form-label">Статус</label>
-                            <select name="status" class="form-select">
-                                <?php foreach ($statuses as $key => $label): ?>
-                                    <option value="<?= $key ?>" <?= $filters['status'] === $key ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($label) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <?php endif; ?>
-
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i> Применить фильтры
-                        </button>
-                        
-                        <a href="/properties" class="btn btn-outline-secondary w-100 mt-2">
-                            <i class="fas fa-undo"></i> Сбросить
-                        </a>
-                    </form>
-                </div>
-            </div>
+<section class="section section--muted">
+    <div class="container">
+        <div class="section__header">
+            <span class="eyebrow">Каталог объектов</span>
+            <h1 class="section__title">Объекты недвижимости</h1>
+            <p class="section__subtitle section__subtitle--muted">Найдено: <?= number_format($totalCount, 0, ',', ' ') ?> объектов</p>
         </div>
 
-        <!-- Основной контент -->
-        <div class="col-lg-9">
-            <!-- Шапка с кнопкой добавления -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1>Объекты недвижимости</h1>
-                    <p class="text-muted mb-0">
-                        Найдено: <?= $pagination['total_count'] ?> объектов
-                    </p>
-                </div>
-                
-                <?php if (isLoggedIn() && hasRole(['admin', 'manager', 'owner'])): ?>
-                <a href="/properties/create" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Добавить объект
-                </a>
-                <?php endif; ?>
-            </div>
+        <div class="listing-layout">
+            <aside class="filters-panel">
+                <h3 class="filters-title">
+                    <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1.5 2h13a.5.5 0 0 1 .4.8L10 9.333V13a1 1 0 0 1-.553.894l-2 1A1 1 0 0 1 6 14V9.333L1.1 2.8A.5.5 0 0 1 1.5 2Z"/></svg>
+                    Фильтры
+                </h3>
+                <form method="GET" action="/properties" class="filters-form">
+                    <div class="form-group">
+                        <label for="filter-search" class="form-label">Поиск</label>
+                        <input id="filter-search" type="text" name="search" class="form-input" placeholder="Название, адрес"
+                               value="<?= e($filters['search']) ?>">
+                    </div>
 
-            <!-- Сортировка -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="btn-group" role="group">
-                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'created_at', 'order_direction' => 'DESC'])) ?>" 
-                           class="btn btn-outline-secondary <?= $filters['order_by'] === 'created_at' ? 'active' : '' ?>">
-                            Новые
-                        </a>
-                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'price', 'order_direction' => 'ASC'])) ?>" 
-                           class="btn btn-outline-secondary <?= $filters['order_by'] === 'price' && $filters['order_direction'] === 'ASC' ? 'active' : '' ?>">
-                            Цена ↑
-                        </a>
-                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'price', 'order_direction' => 'DESC'])) ?>" 
-                           class="btn btn-outline-secondary <?= $filters['order_by'] === 'price' && $filters['order_direction'] === 'DESC' ? 'active' : '' ?>">
-                            Цена ↓
-                        </a>
+                    <div class="form-group">
+                        <label for="filter-type" class="form-label">Тип сделки</label>
+                        <select id="filter-type" name="type" class="form-select">
+                            <option value="">Все типы</option>
+                            <?php foreach ($types as $key => $label): ?>
+                                <option value="<?= $key ?>" <?= $filters['type'] === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-category" class="form-label">Категория</label>
+                        <select id="filter-category" name="category_id" class="form-select">
+                            <option value="">Все категории</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['id'] ?>" <?= (string)$filters['category_id'] === (string)$category['id'] ? 'selected' : '' ?>>
+                                    <?= e($category['name']) ?> (<?= $category['properties_count'] ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-city" class="form-label">Город</label>
+                        <select id="filter-city" name="city" class="form-select">
+                            <option value="">Все города</option>
+                            <?php foreach ($cities as $cityName => $count): ?>
+                                <option value="<?= e($cityName) ?>" <?= $filters['city'] === $cityName ? 'selected' : '' ?>>
+                                    <?= e($cityName) ?> (<?= $count ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Бюджет, ₽</label>
+                        <div class="split-grid">
+                            <input type="number" name="min_price" class="form-input" placeholder="От" value="<?= e($filters['min_price']) ?>">
+                            <input type="number" name="max_price" class="form-input" placeholder="До" value="<?= e($filters['max_price']) ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-rooms" class="form-label">Количество комнат</label>
+                        <select id="filter-rooms" name="rooms" class="form-select">
+                            <option value="">Любое</option>
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <option value="<?= $i ?>" <?= (string)$filters['rooms'] === (string)$i ? 'selected' : '' ?>><?= $i ?><?= $i >= 5 ? '+' : '' ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <?php if (isLoggedIn()): ?>
+                        <div class="form-group">
+                            <label for="filter-status" class="form-label">Статус</label>
+                            <select id="filter-status" name="status" class="form-select">
+                                <?php foreach ($statuses as $key => $label): ?>
+                                    <option value="<?= $key ?>" <?= $filters['status'] === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    <?php endif; ?>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Применить фильтры</button>
+                    <a href="/properties" class="btn btn-outline btn-sm w-100 mt-sm">Сбросить</a>
+                </form>
+            </aside>
+
+            <div class="listing-results">
+                <div class="listing-toolbar">
+                    <div>
+                        <strong><?= number_format($totalCount, 0, ',', ' ') ?></strong>
+                        <span class="text-secondary">актуальных предложений</span>
+                    </div>
+                    <div class="sort-buttons">
+                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'created_at', 'order_direction' => 'DESC'])) ?>"
+                           class="btn btn-outline btn-sm <?= $filters['order_by'] === 'created_at' ? 'active' : '' ?>">Новые</a>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'price', 'order_direction' => 'ASC'])) ?>"
+                           class="btn btn-outline btn-sm <?= $filters['order_by'] === 'price' && $filters['order_direction'] === 'ASC' ? 'active' : '' ?>">Цена ↑</a>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['order_by' => 'price', 'order_direction' => 'DESC'])) ?>"
+                           class="btn btn-outline btn-sm <?= $filters['order_by'] === 'price' && $filters['order_direction'] === 'DESC' ? 'active' : '' ?>">Цена ↓</a>
+                        <?php if (isLoggedIn() && hasRole(['admin', 'manager', 'owner'])): ?>
+                            <a href="/properties/create" class="btn btn-primary btn-sm">Добавить объект</a>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
 
-            <!-- Список объектов -->
-            <?php if (empty($properties)): ?>
-                <div class="text-center py-5">
-                    <i class="fas fa-home fa-3x text-muted mb-3"></i>
-                    <h4>Объекты не найдены</h4>
-                    <p class="text-muted">Попробуйте изменить параметры поиска</p>
-                </div>
-            <?php else: ?>
-                <div class="row">
-                    <?php foreach ($properties as $property): ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card h-100 shadow-sm property-card">
-                            <!-- Изображение -->
-                            <div class="position-relative">
-                                <?php 
-                                $mainImage = '/images/no-image.jpg'; // Placeholder
-                                if ($property['image_count'] > 0) {
-                                    // Здесь можно получить главное изображение
+                <?php if (empty($properties)): ?>
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>Мы не нашли объекты по выбранным фильтрам</h3>
+                            <p class="text-secondary">Попробуйте изменить критерии поиска или обратитесь к нашему эксперту — мы подготовим индивидуальную подборку.</p>
+                            <a href="/contact" class="btn btn-primary btn-sm">Связаться с консультантом</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="result-grid">
+                        <?php foreach ($properties as $property): ?>
+                            <?php
+                                $mainImage = '/images/no-image.jpg';
+                                if (!empty($property['image_count'])) {
                                     $mainImage = '/uploads/properties/placeholder.jpg';
                                 }
-                                ?>
-                                <img src="<?= $mainImage ?>" class="card-img-top property-image" 
-                                     alt="<?= htmlspecialchars($property['title']) ?>" 
-                                     style="height: 200px; object-fit: cover;">
-                                
-                                <!-- Статус бейдж -->
-                                <?php 
-                                $statusClass = [
-                                    'active' => 'success',
-                                    'rented' => 'warning', 
-                                    'inactive' => 'secondary',
-                                    'draft' => 'info'
-                                ][$property['status']] ?? 'secondary';
-                                ?>
-                                <span class="badge bg-<?= $statusClass ?> position-absolute top-0 start-0 m-2">
-                                    <?= $statuses[$property['status']] ?? $property['status'] ?>
-                                </span>
-
-                                <!-- Количество изображений -->
-                                <?php if ($property['image_count'] > 1): ?>
-                                <span class="badge bg-dark position-absolute bottom-0 end-0 m-2">
-                                    <i class="fas fa-camera"></i> <?= $property['image_count'] ?>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="card-body d-flex flex-column">
-                                <!-- Заголовок -->
-                                <h5 class="card-title">
-                                    <a href="/properties/<?= $property['id'] ?>" class="text-decoration-none">
-                                        <?= htmlspecialchars($property['title']) ?>
-                                    </a>
-                                </h5>
-
-                                <!-- Тип и категория -->
-                                <div class="mb-2">
-                                    <span class="badge bg-light text-dark">
-                                        <?= $types[$property['type']] ?? $property['type'] ?>
-                                    </span>
-                                    <?php if ($property['category_name']): ?>
-                                    <span class="badge bg-light text-dark">
-                                        <?= htmlspecialchars($property['category_name']) ?>
-                                    </span>
-                                    <?php endif; ?>
+                                $statusKey = $property['status'] ?? 'active';
+                                $statusLabel = $statuses[$statusKey] ?? $statusKey;
+                                $badgeClass = in_array($statusKey, ['rented', 'inactive'], true) ? 'rent' : 'sale';
+                            ?>
+                            <article class="property-card">
+                                <div class="property-image">
+                                    <img src="<?= $mainImage ?>" alt="<?= e($property['title']) ?>">
+                                    <span class="property-badge <?= $badgeClass ?>"><?= e($statusLabel) ?></span>
+                                    <div class="property-price">
+                                        <?= number_format($property['price'], 0, ',', ' ') ?> ₽
+                                        <span>стоимость</span>
+                                    </div>
                                 </div>
-
-                                <!-- Адрес -->
-                                <?php if ($property['address']): ?>
-                                <p class="text-muted small mb-2">
-                                    <i class="fas fa-map-marker-alt"></i> 
-                                    <?= htmlspecialchars($property['address']) ?>
-                                </p>
-                                <?php endif; ?>
-
-                                <!-- Характеристики -->
-                                <div class="mb-2">
-                                    <?php if ($property['rooms']): ?>
-                                        <span class="text-muted small">
-                                            <i class="fas fa-bed"></i> <?= $property['rooms'] ?> комн.
-                                        </span>
+                                <div class="property-details">
+                                    <h3 class="property-title">
+                                        <a href="/properties/<?= $property['id'] ?>"><?= e($property['title']) ?></a>
+                                    </h3>
+                                    <?php if (!empty($property['address'])): ?>
+                                        <p class="property-address">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 15s6-5.686 6-10A6 6 0 1 0 2 5c0 4.314 6 10 6 10Zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/></svg>
+                                            <?= e($property['address']) ?>
+                                        </p>
                                     <?php endif; ?>
-                                    
-                                    <?php if ($property['area']): ?>
-                                        <span class="text-muted small ms-2">
-                                            <i class="fas fa-ruler-combined"></i> <?= $property['area'] ?> м²
-                                        </span>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($property['floor']): ?>
-                                        <span class="text-muted small ms-2">
-                                            <i class="fas fa-building"></i> <?= $property['floor'] ?> эт.
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-
-                                <!-- Цена -->
-                                <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h4 class="text-primary mb-0">
-                                            <?= number_format($property['price'], 0, '', ' ') ?> ₽
-                                        </h4>
-                                        
-                                        <!-- Кнопки действий -->
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="/properties/<?= $property['id'] ?>" 
-                                               class="btn btn-outline-primary">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            
-                                            <?php if (isLoggedIn()): ?>
-                                                <?php $currentUser = auth(); ?>
-                                                <?php if ($currentUser['id'] === $property['user_id'] || hasRole(['admin', 'manager'])): ?>
-                                                    <a href="/properties/<?= $property['id'] ?>/edit" 
-                                                       class="btn btn-outline-secondary">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                <?php endif; ?>
+                                    <div class="property-features">
+                                        <?php if (!empty($property['rooms'])): ?>
+                                            <span class="property-feature"><?= (int)$property['rooms'] ?> комн.</span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($property['area'])): ?>
+                                            <span class="property-feature"><?= (int)$property['area'] ?> м²</span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($property['floor'])): ?>
+                                            <span class="property-feature"><?= (int)$property['floor'] ?> этаж</span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($property['city'])): ?>
+                                            <span class="property-feature"><?= e($property['city']) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="property-actions">
+                                        <a href="/properties/<?= $property['id'] ?>" class="btn btn-primary btn-sm">Подробнее</a>
+                                        <div class="property-buttons d-flex gap-sm">
+                                            <button type="button" class="btn btn-outline btn-sm" data-favorite-toggle="<?= $property['id'] ?>" aria-label="Добавить в избранное">♡</button>
+                                            <?php
+                                                $ownerId = $property['user_id'] ?? null;
+                                                $canEdit = $currentUser && (
+                                                    $currentUser->id === $ownerId || hasRole(['admin', 'manager'])
+                                                );
+                                            ?>
+                                            <?php if ($canEdit): ?>
+                                                <a href="/properties/<?= $property['id'] ?>/edit" class="btn btn-outline btn-sm" aria-label="Редактировать">✎</a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-
-                                    <!-- Владелец -->
-                                    <small class="text-muted">
-                                        Владелец: <?= htmlspecialchars($property['owner_name']) ?>
-                                    </small>
+                                    <small class="text-secondary">Владелец: <?= e($property['owner_name'] ?? 'Не указан') ?></small>
                                 </div>
-                            </div>
-                        </div>
+                            </article>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
 
-                <!-- Пагинация -->
-                <?php if ($pagination['total_pages'] > 1): ?>
-                <nav aria-label="Пагинация объектов">
-                    <ul class="pagination justify-content-center">
-                        <!-- Предыдущая страница -->
-                        <?php if ($pagination['current_page'] > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" 
-                               href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['current_page'] - 1])) ?>">
-                                <i class="fas fa-chevron-left"></i> Предыдущая
-                            </a>
-                        </li>
-                        <?php endif; ?>
+                    <?php if ($pagination['total_pages'] > 1): ?>
+                        <nav class="pagination" aria-label="Пагинация объектов">
+                            <?php if ($pagination['current_page'] > 1): ?>
+                                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['current_page'] - 1])) ?>">‹</a>
+                            <?php endif; ?>
 
-                        <!-- Номера страниц -->
-                        <?php
-                        $startPage = max(1, $pagination['current_page'] - 2);
-                        $endPage = min($pagination['total_pages'], $pagination['current_page'] + 2);
-                        ?>
-                        
-                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                        <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
-                            <a class="page-link" 
-                               href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>">
-                                <?= $i ?>
-                            </a>
-                        </li>
-                        <?php endfor; ?>
+                            <?php
+                            $startPage = max(1, $pagination['current_page'] - 2);
+                            $endPage = min($pagination['total_pages'], $pagination['current_page'] + 2);
+                            for ($i = $startPage; $i <= $endPage; $i++):
+                                $isActive = $i === $pagination['current_page'];
+                            ?>
+                                <a class="page-link <?= $isActive ? 'active' : '' ?>" href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
 
-                        <!-- Следующая страница -->
-                        <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
-                        <li class="page-item">
-                            <a class="page-link" 
-                               href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['current_page'] + 1])) ?>">
-                                Следующая <i class="fas fa-chevron-right"></i>
-                            </a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                            <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
+                                <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['current_page'] + 1])) ?>">›</a>
+                            <?php endif; ?>
+                        </nav>
+                    <?php endif; ?>
                 <?php endif; ?>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<style>
-.property-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+<?php $content = ob_get_clean(); ?>
 
-.property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-}
-
-.property-image {
-    transition: transform 0.3s;
-}
-
-.property-card:hover .property-image {
-    transform: scale(1.05);
-}
-
-.card-img-top {
-    overflow: hidden;
-}
-
-.btn-group-sm > .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-</style>
+<?php require __DIR__ . '/../layouts/main.php'; ?>
